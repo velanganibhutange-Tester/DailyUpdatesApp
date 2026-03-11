@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DailyUpdatesApp", "DailyUpdatesApp.csproj", "{89BB2AA4-7173-C798-72B0-975638089D82}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{89BB2AA4-7173-C798-72B0-975638089D82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89BB2AA4-7173-C798-72B0-975638089D82}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89BB2AA4-7173-C798-72B0-975638089D82}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89BB2AA4-7173-C798-72B0-975638089D82}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7461C683-CE9C-468E-A233-38EF1B12F825}
+	EndGlobalSection
+EndGlobal

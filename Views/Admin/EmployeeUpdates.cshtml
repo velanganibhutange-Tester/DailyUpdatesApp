@@ -1,0 +1,36 @@
+@model IEnumerable<DailyUpdatesApp.Models.DailyUpdate>
+
+@{
+    ViewData["Title"] = "Employee Updates";
+}
+
+<div class="card" style="max-width:900px; margin:20px auto;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h2>📋 Updates for @ViewData["EmployeeName"]</h2>
+        <a href="/Admin/Dashboard" class="btn btn-secondary">🔙 Back to Dashboard</a>
+    </div>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info">No updates found for this employee.</div>
+    }
+    else
+    {
+        foreach (var update in Model)
+        {
+            <div style="background:white; border:1px solid #e0e0e0; padding:16px; border-radius:8px; margin-bottom:12px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <h3 style="margin:0;">@update.Feature</h3>
+                        <p style="margin:4px 0 0 0; color:#666; font-size:13px;">📅 @update.Date.ToString("MMM dd, yyyy") • @update.CreatedAt.ToString("g")</p>
+                    </div>
+                    <div>
+                        <a href="/Admin/Details/@update.Id" class="btn btn-info">👁️ View</a>
+                    </div>
+                </div>
+
+                <p style="margin-top:10px; color:#444;">@update.TicketDescription</p>
+            </div>
+        }
+    }
+</div>

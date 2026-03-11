@@ -1,0 +1,126 @@
+@model DailyUpdatesApp.Models.DailyUpdate
+
+@{
+    ViewData["Title"] = "Edit Daily Update";
+}
+
+<div class="card">
+    <h2>✏️ Edit Daily Update</h2>
+
+    <form method="post" asp-action="Edit">
+        <input type="hidden" asp-for="Id" />
+        <div asp-validation-summary="ModelOnly" class="text-danger" style="margin-bottom:15px;"></div>
+
+        <!-- reuse Add form layout -->
+        <div style="background: #fff3e0; padding: 20px; border-radius: 8px; margin-bottom: 25px; border-left: 4px solid #ff9800;">
+            <h3 style="color: #ff9800; margin-bottom: 20px;">🎫 Project Management Details</h3>
+
+            <div class="form-group">
+                <label asp-for="Feature">Feature/Module <span style="color: red;">*</span></label>
+                <input asp-for="Feature" placeholder="e.g., Authentication, Dashboard, API Integration..." style="padding: 12px; border: 2px solid #ddd; border-radius: 4px; width: 100%;" />
+                <span asp-validation-for="Feature" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="TicketNumber">Ticket Number <span style="color: red;">*</span></label>
+                <input asp-for="TicketNumber" placeholder="e.g., PHOENIX-11516" style="padding: 12px; border: 2px solid #ddd; border-radius: 4px; width: 100%;" />
+                <span asp-validation-for="TicketNumber" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="TicketDescription">Ticket Description <span style="color: red;">*</span></label>
+                <textarea asp-for="TicketDescription" placeholder="Detailed ticket description..." style="padding: 12px; border: 2px solid #ddd; border-radius: 4px; width: 100%; min-height: 80px; font-family: inherit;"></textarea>
+                <span asp-validation-for="TicketDescription" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Status">Status <span style="color: red;">*</span></label>
+                <select asp-for="Status" style="padding: 12px; border: 2px solid #ddd; border-radius: 4px; width: 100%;">
+                    <option value="">-- Select Status --</option>
+                    <option value="In Progress">⏳ In Progress</option>
+                    <option value="Ready for Production">✅ Ready for Production</option>
+                    <option value="Blocked">🛑 Blocked</option>
+                    <option value="In UAT">🧪 In UAT</option>
+                    <option value="Done">🎉 Done</option>
+                </select>
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Blockers">Blockers (if any)</label>
+                <textarea asp-for="Blockers" placeholder="Describe any blockers preventing progress..." style="padding: 12px; border: 2px solid #ddd; border-radius: 4px; width: 100%; min-height: 80px; font-family: inherit;"></textarea>
+                <span asp-validation-for="Blockers" class="text-danger"></span>
+            </div>
+        </div>
+
+        <!-- ETA Section -->
+        <div style="background: #e3f2fd; padding: 20px; border-radius: 8px; margin-bottom: 25px; border-left: 4px solid #2196f3;">
+            <h3 style="color: #2196f3; margin-bottom: 20px;">⏱️ Estimated Time & ETA Changes</h3>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                <div class="form-group">
+                    <label asp-for="EstimatedHours">Hours <span style="color: red;">*</span></label>
+                    <input asp-for="EstimatedHours" type="number" min="0" max="23" value="0" style="padding: 12px; border: 2px solid #ddd; border-radius: 4px; width: 100%;" />
+                    <span asp-validation-for="EstimatedHours" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="EstimatedMinutes">Minutes <span style="color: red;">*</span></label>
+                    <input asp-for="EstimatedMinutes" type="number" min="0" max="59" value="0" style="padding: 12px; border: 2px solid #ddd; border-radius: 4px; width: 100%;" />
+                    <span asp-validation-for="EstimatedMinutes" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="EstimatedSeconds">Seconds <span style="color: red;">*</span></label>
+                    <input asp-for="EstimatedSeconds" type="number" min="0" max="59" value="0" style="padding: 12px; border: 2px solid #ddd; border-radius: 4px; width: 100%;" />
+                    <span asp-validation-for="EstimatedSeconds" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group" style="display:flex; align-items:center; gap:12px;">
+                <label style="font-weight:600; color:#555; margin-right:8px;">Has ETA Changed? <span style="color: red;">*</span></label>
+                <input type="hidden" name="HasETAChange" value="false" />
+                <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                    <input id="HasETAChangeCheckbox" name="HasETAChange" type="checkbox" value="true" onchange="onETAChangeToggle(this)" />
+                    <span style="display:inline-block; padding:6px 10px; border-radius:6px; background:#fff3cd; margin-left:6px; font-weight:600;">⚠️ ETA Changed</span>
+                </label>
+                <span asp-validation-for="HasETAChange" class="text-danger"></span>
+            </div>
+
+            <div class="form-group" id="etaChangeField" style="display: none;">
+                <label asp-for="ETAChangeDescription">ETA Change Description</label>
+                <textarea asp-for="ETAChangeDescription" placeholder="Describe the ETA change and reason..." style="padding: 12px; border: 2px solid #ddd; border-radius: 4px; width: 100%; min-height: 80px; font-family: inherit;"></textarea>
+                <span asp-validation-for="ETAChangeDescription" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 30px;">
+            <button type="submit" style="padding: 14px 28px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.3s;">💾 Save Changes</button>
+            <a href="/Update/MyUpdates" style="padding: 14px 28px; background: #6c757d; color: white; text-decoration: none; border-radius: 8px; font-size: 16px; font-weight: 600; display: inline-block; transition: 0.3s;">📋 Back to My Updates</a>
+        </div>
+    </form>
+
+    <partial name="_ValidationScriptsPartial" />
+<script>
+    function toggleETAChangeField(show) {
+        var el = document.getElementById('etaChangeField');
+        if (!el) return;
+        el.style.display = show ? 'block' : 'none';
+        if (!show) {
+            var desc = document.getElementById('ETAChangeDescription');
+            if (desc) desc.value = '';
+        }
+    }
+
+    function onETAChangeToggle(cb) {
+        toggleETAChangeField(cb.checked);
+    }
+
+    (function() {
+        var cb = document.getElementById('HasETAChangeCheckbox');
+        if (!cb) return;
+        var modelVal = '@(Model?.HasETAChange == true ? "true" : "false")';
+        if (modelVal === 'true') {
+            cb.checked = true;
+            toggleETAChangeField(true);
+        }
+    })();
+</script>

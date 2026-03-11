@@ -1,0 +1,114 @@
+@model DailyUpdatesApp.Models.DailyUpdate
+
+@{
+    ViewData["Title"] = "Update Details";
+}
+
+<div class="card" style="max-width: 900px; margin: 0 auto; margin-top: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 20px;">
+        <h2 style="margin: 0;">📋 Update Details</h2>
+        <a href="/Admin/Dashboard" class="btn btn-secondary">🔙 Back to Dashboard</a>
+    </div>
+
+    <!-- Update Summary Header -->
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #667eea;">
+        <h3 style="margin: 0 0 10px 0; color: #333;">@Model.Feature</h3>
+        <p style="margin: 5px 0 0 0; color: #999; font-size: 14px;">👤 @(Model.Employee?.Name ?? "Unknown") | 📅 @Model.Date.ToString("MMMM dd, yyyy")</p>
+    </div>
+
+    <!-- Single Field Format - All Information in One Box -->
+    <div style="background: white; border: 2px solid #e0e0e0; border-radius: 8px; padding: 25px; margin-bottom: 20px;">
+        <div style="font-size: 15px; line-height: 2; color: #333;">
+            <p style="margin: 0 0 10px 0;">
+                <strong>🧩 Feature/Module:</strong> @Model.Feature
+            </p>
+            <p style="margin: 0 0 10px 0;">
+                <strong>🎫 Ticket No(s):</strong> @Model.TicketNumber
+            </p>
+            <p style="margin: 0 0 10px 0;">
+                <strong>📝 Description:</strong> @Model.TicketDescription
+            </p>
+            <p style="margin: 0 0 10px 0;">
+                <strong>📌 Status:</strong> @Model.Status
+            </p>
+            <p style="margin: 0 0 10px 0;">
+                <strong>📅 ETA:</strong> @Model.EstimatedHours h @Model.EstimatedMinutes m @Model.EstimatedSeconds s
+            </p>
+            @if (!string.IsNullOrEmpty(Model.Blockers))
+            {
+                <p style="margin: 0 0 10px 0;">
+                    <strong>⛔ Blockers:</strong> @Model.Blockers
+                </p>
+            }
+            else
+            {
+                <p style="margin: 0 0 10px 0;">
+                    <strong>⛔ Blockers:</strong> None
+                </p>
+            }
+            @if (Model.HasETAChange && !string.IsNullOrEmpty(Model.ETAChangeDescription))
+            {
+                <p style="margin: 0;">
+                    <strong>⚠️ ETA Change:</strong> @Model.ETAChangeDescription
+                </p>
+            }
+            else
+            {
+                <p style="margin: 0;">
+                    <strong>⚠️ ETA Change:</strong> N/A
+                </p>
+            }
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="display: flex; gap: 10px; margin-top: 30px; flex-wrap: wrap;">
+        <a href="/Admin/Dashboard" class="btn btn-secondary">🔙 Back to Dashboard</a>
+        <form asp-controller="Admin" asp-action="Delete" method="post" onsubmit="return confirm('Delete this update?');" style="display: inline;">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@Model.Id" />
+            <button type="submit" class="btn btn-danger">🗑️ Delete</button>
+        </form>
+    </div>
+</div>
+
+<style>
+    .card {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    .btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+    }
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+    .btn-primary:hover {
+        opacity: 0.9;
+    }
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+    }
+    .btn-secondary:hover {
+        opacity: 0.9;
+    }
+    .btn-danger {
+        background: #dc3545;
+        color: white;
+    }
+    .btn-danger:hover {
+        opacity: 0.9;
+    }
+</style>

@@ -1,0 +1,124 @@
+@model IEnumerable<DailyUpdatesApp.Models.DailyUpdate>
+
+@{
+    ViewData["Title"] = "My Updates";
+}
+
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2>📝 My Daily Updates</h2>
+        <a href="/Update/Add" class="btn btn-primary">➕ Add New Update</a>
+    </div>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info">
+            <strong>No updates found!</strong> 
+            <a href="/Update/Add">Click here to add your first update</a>
+        </div>
+    }
+    else
+    {
+        @foreach (var update in Model.OrderByDescending(x => x.Date).ThenByDescending(x => x.CreatedAt))
+        {
+            <div style="background: white; border: 2px solid #e0e0e0; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+                <!-- Header -->
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px; border-bottom: 2px solid #f0f0f0; padding-bottom: 15px;">
+                    <div>
+                        <h3 style="margin: 0; color: #333;">@update.Feature</h3>
+                        <p style="margin: 5px 0 0 0; color: #999; font-size: 14px;">📅 @update.Date.ToString("MMM dd, yyyy")</p>
+                    </div>
+                    <div style="text-align: right;">
+                        @if (update.HasETAChange)
+                        {
+                            <span style="background:#ff9800; color:white; padding:6px 10px; border-radius:12px; font-weight:700; font-size:12px;">⚠️ ETA Changed</span>
+                        }
+                    </div>
+                </div>
+
+                <!-- Ticket Information -->
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div>
+                            <p style="margin: 0 0 5px 0; font-weight: 600; color: #667eea;">🎫 Ticket Number</p>
+                            <p style="margin: 0; color: #333; font-size: 16px;">@update.TicketNumber</p>
+                        </div>
+                        <div>
+                            <p style="margin: 0 0 5px 0; font-weight: 600; color: #667eea;">📊 Status</p>
+                            <p style="margin: 0;">
+                                @if (update.Status == "In Progress")
+                                {
+                                    <span style="background: #2196f3; color: white; padding: 4px 10px; border-radius: 4px; font-size: 12px;">⏳ In Progress</span>
+                                }
+                                else if (update.Status == "Ready for Production")
+                                {
+                                    <span style="background: #28a745; color: white; padding: 4px 10px; border-radius: 4px; font-size: 12px;">✅ Ready for Production</span>
+                                }
+                                else if (update.Status == "Blocked")
+                                {
+                                    <span style="background: #dc3545; color: white; padding: 4px 10px; border-radius: 4px; font-size: 12px;">🛑 Blocked</span>
+                                }
+                                else if (update.Status == "In UAT")
+                                {
+                                    <span style="background: #ff9800; color: white; padding: 4px 10px; border-radius: 4px; font-size: 12px;">🧪 In UAT</span>
+                                }
+                                else if (update.Status == "Done")
+                                {
+                                    <span style="background: #4caf50; color: white; padding: 4px 10px; border-radius: 4px; font-size: 12px;">🎉 Done</span>
+                                }
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Descriptions -->
+                
+
+                <div style="margin-bottom: 15px;">
+                    <p style="margin: 0 0 5px 0; font-weight: 600; color: #333;">🎫 Ticket Description</p>
+                    <p style="margin: 0; color: #666; line-height: 1.6; padding: 10px; background: #fafafa; border-radius: 4px;">@update.TicketDescription</p>
+                </div>
+
+                <!-- ETA Information -->
+                <div style="background: #e3f2fd; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+                    <p style="margin: 0 0 10px 0; font-weight: 600; color: #2196f3;">⏱️ Estimated Time: @update.EstimatedHours hours @update.EstimatedMinutes mins @update.EstimatedSeconds secs</p>
+                    @if (update.HasETAChange)
+                    {
+                        <div style="margin-top: 10px; padding: 10px; background: #fff3cd; border-left: 4px solid #ff9800; border-radius: 4px;">
+                            <p style="margin: 0; font-weight: 600; color: #ff6f00;">⚠️ ETA Changed</p>
+                            <p style="margin: 5px 0 0 0; color: #666;">@update.ETAChangeDescription</p>
+                        </div>
+                    }
+                </div>
+
+                <!-- Blockers -->
+                @if (!string.IsNullOrEmpty(update.Blockers))
+                {
+                    <div style="background: #ffebee; padding: 15px; border-radius: 6px; margin-bottom: 15px; border-left: 4px solid #dc3545;">
+                        <p style="margin: 0 0 10px 0; font-weight: 600; color: #c62828;">🛑 Blockers</p>
+                        <p style="margin: 0; color: #666; line-height: 1.6;">@update.Blockers</p>
+                    </div>
+                }
+
+                <!-- Metadata -->
+                <div style="border-top: 1px solid #e0e0e0; padding-top: 12px; font-size: 12px; color: #999;">
+                    <p style="margin: 0;">Added on: @update.CreatedAt.ToString("MMM dd, yyyy HH:mm:ss")</p>
+                </div>
+                <div style="margin-top:10px; display:flex; gap:8px;">
+                    <a href="/Update/Details/@update.Id" class="btn btn-info">👁️ View Details</a>
+                    <a href="/Update/Edit/@update.Id" class="btn btn-primary">✏️ Edit</a>
+                    <form asp-controller="Update" asp-action="Delete" method="post" onsubmit="return confirm('Delete this update?');" style="display: inline;">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@update.Id" />
+                        <button type="submit" class="btn btn-danger">🗑️ Delete</button>
+                    </form>
+                </div>
+            </div>
+        }
+    }
+
+    <div class="button-group" style="margin-top: 20px;">
+        <a href="/Update/Add" class="btn btn-success">➕ Add New Update</a>
+        <a href="/" class="btn btn-secondary">🏠 Home</a>
+    </div>
+</div>

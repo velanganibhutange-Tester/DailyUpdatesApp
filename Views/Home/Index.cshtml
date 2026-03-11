@@ -1,0 +1,231 @@
+@using DailyUpdatesApp.Models.ViewModels
+@model object
+
+@{
+    ViewData["Title"] = "Welcome";
+
+    
+    DailyUpdatesApp.Models.ViewModels.HomeIndexViewModel vm = null;
+    IEnumerable<DailyUpdatesApp.Models.DailyUpdate> updatesList = new List<DailyUpdatesApp.Models.DailyUpdate>();
+
+    if (Model is DailyUpdatesApp.Models.ViewModels.HomeIndexViewModel m)
+    {
+        vm = m;
+        updatesList = vm.Updates ?? Enumerable.Empty<DailyUpdatesApp.Models.DailyUpdate>();
+    }
+    else if (Model is IEnumerable<DailyUpdatesApp.Models.DailyUpdate> list)
+    {
+        updatesList = list;
+    }
+}
+
+<div class="card" style="text-align: center;">
+    <h1>📊 Welcome to Daily Updates App</h1>
+    <p style="font-size: 1.1em; color: #666; margin: 20px 0;">Track and manage daily updates efficiently</p>
+
+    @if (User?.Identity?.IsAuthenticated ?? false)
+    {
+        <div class="button-group" style="justify-content: center; margin-top: 30px;">
+            <a href="/Update/Add" class="btn btn-primary">➕ Add New Update</a>
+            <a href="/Update/MyUpdates" class="btn btn-secondary">📝 View My Updates</a>
+            @if (User.IsInRole("Manager"))
+            {
+                <a href="/Admin/Dashboard" class="btn btn-success">👨‍💼 Team Dashboard</a>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="button-group" style="justify-content: center; margin-top: 30px;">
+            <a href="/Identity/Account/Login" class="btn btn-primary">🔐 Login</a>
+            <a href="/Identity/Account/Register" class="btn btn-secondary">✍️ Create Account</a>
+        </div>
+    }
+
+
+@* Manager: show employees list for quick navigation *@
+@if (vm != null && vm.Employees != null && vm.Employees.Any())
+{
+    <div class="card" style="margin-top: 30px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <h2>👥 Team Members</h2>
+            <p style="margin:0; color:#777; font-size:14px;">Click a name to view that employee's updates (most recent first)</p>
+        </div>
+        <ul style="list-style:none; padding-left:0; display:flex; flex-wrap:wrap; gap:10px;">
+            @foreach (var e in vm.Employees)
+            {
+                <li>
+                    <a href="/Admin/EmployeeUpdates/@e.Id" class="btn btn-light" style="padding:8px 12px; border-radius:8px; border:1px solid #ddd; display:inline-block;">👤 @e.Name</a>
+                </li>
+            }
+        </ul>
+    </div>
+}
+
+@if (User?.Identity?.IsAuthenticated ?? false)
+{
+    <div class="card" style="margin-top: 30px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2>📋 Today's Updates</h2>
+            <span style="background: #667eea; color: white; padding: 8px 16px; border-radius: 20px; font-weight: 600;">@updatesList.Count() updates</span>
+        </div>
+
+        @if (!updatesList.Any())
+        {
+            <div class="alert alert-info" style="background: #e3f2fd; border: 2px solid #2196f3; border-radius: 8px; padding: 15px; color: #1976d2;">
+                <strong>No updates submitted yet!</strong> Updates submitted today will appear here.
+            </div>
+        }
+        else
+        {
+            @foreach (var update in updatesList)
+            {
+                <div style="background: white; border: 2px solid #e0e0e0; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+                    <!-- Update Summary Header -->
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px; border-bottom: 2px solid #f0f0f0; padding-bottom: 15px;">
+                        <div>
+                            <h3 style="margin: 0; color: #333;">@update.Feature</h3>
+                            <p style="margin: 5px 0 0 0; color: #999; font-size: 14px;">👤 @(update.Employee?.Name ?? "Unknown") | 📅 @System.DateTime.Today.ToString("MMM dd, yyyy")</p>
+                        </div>
+                        <div style="text-align: right;">
+                            @if (update.Status == "In Progress")
+                            {
+                                <span style="background: #2196f3; color: white; padding: 6px 12px; border-radius: 20px; font-weight: 600; font-size: 12px;">⏳ In Progress</span>
+                            }
+                            else if (update.Status == "Ready for Production")
+                            {
+                                <span style="background: #28a745; color: white; padding: 6px 12px; border-radius: 20px; font-weight: 600; font-size: 12px;">✅ Ready for Production</span>
+                            }
+                            else if (update.Status == "Blocked")
+                            {
+                                <span style="background: #dc3545; color: white; padding: 6px 12px; border-radius: 20px; font-weight: 600; font-size: 12px;">🛑 Blocked</span>
+                            }
+                            else if (update.Status == "In UAT")
+                            {
+                                <span style="background: #ff9800; color: white; padding: 6px 12px; border-radius: 20px; font-weight: 600; font-size: 12px;">🧪 In UAT</span>
+                            }
+                            else if (update.Status == "Done")
+                            {
+                                <span style="background: #4caf50; color: white; padding: 6px 12px; border-radius: 20px; font-weight: 600; font-size: 12px;">🎉 Done</span>
+                            }
+
+                            @if (update.HasETAChange)
+                            {
+                                <div style="margin-top:8px;">
+                                    <span style="display:inline-block; background:#ff9800; color:white; padding:6px 10px; border-radius:12px; font-weight:700; font-size:12px;">⚠️ ETA Changed</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Condensed Single-Field Format -->
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #667eea; font-size: 14px; line-height: 1.8; color: #333;">
+                        <p style="margin: 0 0 8px 0;"><strong>🧩 Feature/Module:</strong> @update.Feature</p>
+                        <p style="margin: 0 0 8px 0;"><strong>🎫 Ticket No(s):</strong> @update.TicketNumber</p>
+                        <p style="margin: 0 0 8px 0;"><strong>📝 Description:</strong> @update.TicketDescription</p>
+                        <p style="margin: 0 0 8px 0;"><strong>📌 Status:</strong> @update.Status</p>
+                        <p style="margin: 0 0 8px 0;"><strong>📅 ETA:</strong> @update.EstimatedHours h @update.EstimatedMinutes m @update.EstimatedSeconds s</p>
+                        @if (!string.IsNullOrEmpty(update.Blockers))
+                        {
+                            <p style="margin: 0 0 8px 0;"><strong>⛔ Blockers:</strong> @update.Blockers</p>
+                        }
+                        else
+                        {
+                            <p style="margin: 0 0 8px 0;"><strong>⛔ Blockers:</strong> None</p>
+                        }
+                        @if (update.HasETAChange && !string.IsNullOrEmpty(update.ETAChangeDescription))
+                        {
+                            <p style="margin: 0;"><strong>⚠️ ETA Change:</strong> @update.ETAChangeDescription</p>
+                        }
+                        else
+                        {
+                            <p style="margin: 0;"><strong>⚠️ ETA Change:</strong> N/A</p>
+                        }
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        @if (User.IsInRole("Manager"))
+                        {
+                            <a href="/Admin/Details/@update.Id" class="btn btn-info" style="font-size: 14px;">👁️ View Full Details</a>
+                            <form asp-controller="Admin" asp-action="Delete" method="post" onsubmit="return confirm('Delete this update?');" style="display: inline;">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@update.Id" />
+                                <button type="submit" class="btn btn-danger" style="font-size: 14px;">🗑️ Delete</button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            }
+        }
+    </div>
+}
+
+
+<div class="card mt-4 p-4">
+    <h2 class="text-center mb-4">✨ Why You'll Love Daily Updates</h2>
+
+    <div class="row text-center">
+
+        <div class="col-md-4 mb-4">
+            <div class="feature-box p-4">
+                <div class="feature-icon">📝</div>
+                <h5>Quick Submissions</h5>
+                <p>Submit daily updates in seconds with a clean and simple interface.</p>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="feature-box p-4">
+                <div class="feature-icon">📊</div>
+                <h5>Track Progress</h5>
+                <p>Manage tickets, ETAs, and monitor project updates easily.</p>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="feature-box p-4">
+                <div class="feature-icon">📁</div>
+                <h5>Update History</h5>
+                <p>Access complete history of your submitted updates anytime.</p>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="feature-box p-4">
+                <div class="feature-icon">👨‍💼</div>
+                <h5>Manager Dashboard</h5>
+                <p>Managers can monitor team performance and review updates efficiently.</p>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="feature-box p-4">
+                <div class="feature-icon">🔐</div>
+                <h5>Secure Authentication</h5>
+                <p>Protected access with secure login and role-based authorization.</p>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+.feature-box {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.feature-box:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.feature-icon {
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+</style>

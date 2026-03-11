@@ -1,0 +1,138 @@
+@model IEnumerable<DailyUpdatesApp.Models.DailyUpdate>
+
+@{
+    ViewData["Title"] = "Team Dashboard";
+}
+
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2>👨‍💼 Team Project Management Dashboard</h2>
+        <span style="background: #667eea; color: white; padding: 8px 16px; border-radius: 20px; font-weight: 600;">
+            @Model.Count() updates
+        </span>
+    </div>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info">
+            <strong>No updates available!</strong> Your team hasn't submitted any updates yet.
+        </div>
+    }
+    else
+    {
+        <!-- Summary Statistics -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;">
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px; text-align: center;">
+                <p style="margin: 0; font-size: 28px; font-weight: bold;">@Model.Count()</p>
+                <p style="margin: 5px 0 0 0; font-size: 14px;">Total Updates</p>
+            </div>
+            <div style="background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%); color: white; padding: 20px; border-radius: 8px; text-align: center;">
+                <p style="margin: 0; font-size: 28px; font-weight: bold;">@Model.Count(x => x.Status == "In Progress")</p>
+                <p style="margin: 5px 0 0 0; font-size: 14px;">In Progress</p>
+            </div>
+            <div style="background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%); color: white; padding: 20px; border-radius: 8px; text-align: center;">
+                <p style="margin: 0; font-size: 28px; font-weight: bold;">@Model.Count(x => x.Status == "Blocked")</p>
+                <p style="margin: 5px 0 0 0; font-size: 14px;">Blocked</p>
+            </div>
+            <div style="background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%); color: white; padding: 20px; border-radius: 8px; text-align: center;">
+                <p style="margin: 0; font-size: 28px; font-weight: bold;">@Model.Count(x => x.Status == "Done")</p>
+                <p style="margin: 5px 0 0 0; font-size: 14px;">Done</p>
+            </div>
+        </div>
+
+        <!-- Updates Details -->
+        @foreach (var update in Model.OrderByDescending(x => x.Date).ThenByDescending(x => x.CreatedAt))
+        {
+            <div style="background: white; border: 2px solid #e0e0e0; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+                <!-- Header -->
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px; border-bottom: 2px solid #f0f0f0; padding-bottom: 15px;">
+                    <div>
+                        <h3 style="margin: 0; color: #333;">@update.Feature</h3>
+                        <p style="margin: 5px 0 0 0; color: #999; font-size: 14px;">
+                            👤 @(update.Employee?.Name ?? "Unknown") | 📅 @update.Date.ToString("MMM dd, yyyy")
+                        </p>
+                    </div>
+                    <div style="text-align: right;">
+                        @if (update.Status == "In Progress")
+                        {
+                            <span style="background: #2196f3; color: white; padding: 6px 12px; border-radius: 20px; font-weight: 600; font-size: 12px;">⏳ In Progress</span>
+                        }
+                        else if (update.Status == "Ready for Production")
+                        {
+                            <span style="background: #28a745; color: white; padding: 6px 12px; border-radius: 20px; font-weight: 600; font-size: 12px;">✅ Ready for Production</span>
+                        }
+                        else if (update.Status == "Blocked")
+                        {
+                            <span style="background: #dc3545; color: white; padding: 6px 12px; border-radius: 20px; font-weight: 600; font-size: 12px;">🛑 Blocked</span>
+                        }
+                        else if (update.Status == "In UAT")
+                        {
+                            <span style="background: #ff9800; color: white; padding: 6px 12px; border-radius: 20px; font-weight: 600; font-size: 12px;">🧪 In UAT</span>
+                        }
+                        else if (update.Status == "Done")
+                        {
+                            <span style="background: #4caf50; color: white; padding: 6px 12px; border-radius: 20px; font-weight: 600; font-size: 12px;">🎉 Done</span>
+                        }
+
+                        @* ETA Changed badge *@
+                        @if (update.HasETAChange)
+                        {
+                            <div style="margin-top:8px;">
+                                <span style="display:inline-block; background:#ff9800; color:white; padding:6px 10px; border-radius:12px; font-weight:700; font-size:12px;">⚠️ ETA Changed</span>
+                            </div>
+                        }
+                        <div style="margin-top:10px; display:flex; gap:8px; justify-content:flex-end;">
+                            <a href="/Admin/Details/@update.Id" class="btn btn-info">👁️ View Details</a>
+                            <form asp-controller="Admin" asp-action="Delete" method="post" onsubmit="return confirm('Delete this update?');" style="display: inline;">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@update.Id" />
+                                <button type="submit" class="btn btn-danger">🗑️ Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ticket Info -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                    <div>
+                        <p style="margin: 0 0 5px 0; font-weight: 600; color: #667eea;">🎫 Ticket Number</p>
+                        <p style="margin: 0; color: #333; font-weight: 500;">@update.TicketNumber</p>
+                    </div>
+                    
+                </div>
+
+                
+
+                <div style="margin-bottom: 15px;">
+                    <p style="margin: 0 0 5px 0; font-weight: 600; color: #333;">🎫 Ticket Description</p>
+                    <p style="margin: 0; color: #666; line-height: 1.6; padding: 10px; background: #fafafa; border-radius: 4px;">@update.TicketDescription</p>
+                </div>
+
+                <!-- ETA -->
+                <div style="background: #e3f2fd; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+                    <p style="margin: 0; font-weight: 600; color: #2196f3;">⏱️ ETA: @update.EstimatedHours hours @update.EstimatedMinutes mins @update.EstimatedSeconds secs</p>
+                    @if (update.HasETAChange)
+                    {
+                        <div style="margin-top: 10px; padding: 10px; background: #fff3cd; border-left: 4px solid #ff9800; border-radius: 4px;">
+                            <p style="margin: 0; font-weight: 600; color: #ff6f00;">⚠️ ETA Changed: @update.ETAChangeDescription</p>
+                        </div>
+                    }
+                </div>
+
+                <!-- Blockers -->
+                @if (!string.IsNullOrEmpty(update.Blockers))
+                {
+                    <div style="background: #ffebee; padding: 15px; border-radius: 6px; margin-bottom: 15px; border-left: 4px solid #dc3545;">
+                        <p style="margin: 0 0 10px 0; font-weight: 600; color: #c62828;">🛑 Blockers</p>
+                        <p style="margin: 0; color: #666; line-height: 1.6;">@update.Blockers</p>
+                    </div>
+                }
+
+            </div>
+        }
+    }
+
+    <div class="button-group" style="margin-top: 20px;">
+        <a href="/" class="btn btn-secondary">🏠 Home</a>
+    </div>
+</div>

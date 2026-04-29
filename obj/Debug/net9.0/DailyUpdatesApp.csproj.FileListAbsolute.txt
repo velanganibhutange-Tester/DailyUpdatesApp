@@ -364,6 +364,7 @@ D:\DailyUpdatesApp\DailyUpdatesApp\obj\Debug\net9.0\DailyUpdatesApp.MvcApplicati
 D:\DailyUpdatesApp\DailyUpdatesApp\obj\Debug\net9.0\DailyUpdatesApp.MvcApplicationPartsAssemblyInfo.cache
 D:\DailyUpdatesApp\DailyUpdatesApp\obj\Debug\net9.0\DailyUpdatesApp.RazorAssemblyInfo.cache
 D:\DailyUpdatesApp\DailyUpdatesApp\obj\Debug\net9.0\DailyUpdatesApp.RazorAssemblyInfo.cs
+D:\DailyUpdatesApp\DailyUpdatesApp\obj\Debug\net9.0\DailyUpdatesApp.sourcelink.json
 D:\DailyUpdatesApp\DailyUpdatesApp\obj\Debug\net9.0\rjimswa.dswa.cache.json
 D:\DailyUpdatesApp\DailyUpdatesApp\obj\Debug\net9.0\rjsmrazor.dswa.cache.json
 D:\DailyUpdatesApp\DailyUpdatesApp\obj\Debug\net9.0\rjsmcshtml.dswa.cache.json

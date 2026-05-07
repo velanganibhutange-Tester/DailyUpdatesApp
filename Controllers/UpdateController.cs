@@ -1,10 +1,11 @@
 using System;
 using System.Linq;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using DailyUpdatesApp.Models;
-using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
+using System.Threading;
+using System.Threading.Tasks;
+using DailyUpdatesApp.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace DailyUpdatesApp.Controllers
@@ -19,73 +20,124 @@ namespace DailyUpdatesApp.Controllers
             _ctx = ctx;
         }
 
+        private string CurrentEmployeeId => User.FindFirstValue(ClaimTypes.NameIdentifier);
+
         public IActionResult Add() => View();
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Add(DailyUpdate model)
+        public async Task<IActionResult> Add(
+            [Bind("Feature,TicketNumber,TicketDescription,Status,Blockers,EstimatedHours,EstimatedMinutes,EstimatedSeconds,HasETAChange,ETAChangeDescription")]
+            DailyUpdate model,
+            CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            model.EmployeeId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var empId = CurrentEmployeeId;
+            if (string.IsNullOrWhiteSpace(empId))
+            {
+                return Challenge();
+            }
+
+            model.EmployeeId = empId;
             model.Date = DateTime.Today;
+            model.CreatedAt = DateTime.Now;
+
             _ctx.DailyUpdates.Add(model);
-            _ctx.SaveChanges();
-            return RedirectToAction("MyUpdates");
+            await _ctx.SaveChangesAsync(cancellationToken);
+            return RedirectToAction(nameof(MyUpdates));
         }
 
-        public IActionResult MyUpdates()
+        public async Task<IActionResult> MyUpdates(CancellationToken cancellationToken)
         {
-            var empId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var updates = _ctx.DailyUpdates.Where(x=>x.EmployeeId==empId).ToList();
+            var empId = CurrentEmployeeId;
+            if (string.IsNullOrWhiteSpace(empId))
+            {
+                return Challenge();
+            }
+
+            var updates = await _ctx.DailyUpdates
+                .Where(x => x.EmployeeId == empId)
+                .OrderByDescending(x => x.Date)
+                .ThenByDescending(x => x.CreatedAt)
+                .AsNoTracking()
+                .ToListAsync(cancellationToken);
+
             return View(updates);
         }
 
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Details(int id, CancellationToken cancellationToken)
         {
-            var empId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var update = _ctx.DailyUpdates
-                              .Where(x => x.Id == id && x.EmployeeId == empId)
-                              .Include(x => x.Employee)
-                              .FirstOrDefault();
+            var empId = CurrentEmployeeId;
+            if (string.IsNullOrWhiteSpace(empId))
+            {
+                return Challenge();
+            }
+
+            var update = await _ctx.DailyUpdates
+                .Where(x => x.Id == id && x.EmployeeId == empId)
+                .Include(x => x.Employee)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(cancellationToken);
+
             if (update == null)
             {
                 return NotFound();
             }
+
             return View(update);
         }
 
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id, CancellationToken cancellationToken)
         {
-            var empId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var update = _ctx.DailyUpdates.FirstOrDefault(x => x.Id == id && x.EmployeeId == empId);
+            var empId = CurrentEmployeeId;
+            if (string.IsNullOrWhiteSpace(empId))
+            {
+                return Challenge();
+            }
+
+            var update = await _ctx.DailyUpdates
+                .Where(x => x.Id == id && x.EmployeeId == empId)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(cancellationToken);
+
             if (update == null)
             {
                 return NotFound();
             }
+
             return View(update);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(DailyUpdate model)
+        public async Task<IActionResult> Edit(
+            [Bind("Id,Feature,TicketNumber,TicketDescription,Status,Blockers,EstimatedHours,EstimatedMinutes,EstimatedSeconds,HasETAChange,ETAChangeDescription")]
+            DailyUpdate model,
+            CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            var empId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var existing = _ctx.DailyUpdates.FirstOrDefault(x => x.Id == model.Id && x.EmployeeId == empId);
+            var empId = CurrentEmployeeId;
+            if (string.IsNullOrWhiteSpace(empId))
+            {
+                return Challenge();
+            }
+
+            var existing = await _ctx.DailyUpdates
+                .FirstOrDefaultAsync(x => x.Id == model.Id && x.EmployeeId == empId, cancellationToken);
+
             if (existing == null)
             {
                 return NotFound();
             }
 
-            // Update allowed fields
             existing.Feature = model.Feature;
             existing.TicketNumber = model.TicketNumber;
             existing.TicketDescription = model.TicketDescription;
@@ -97,26 +149,31 @@ namespace DailyUpdatesApp.Controllers
             existing.HasETAChange = model.HasETAChange;
             existing.ETAChangeDescription = model.ETAChangeDescription;
 
-            _ctx.DailyUpdates.Update(existing);
-            _ctx.SaveChanges();
-
-            return RedirectToAction("MyUpdates");
+            await _ctx.SaveChangesAsync(cancellationToken);
+            return RedirectToAction(nameof(MyUpdates));
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
         {
-            var empId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var update = _ctx.DailyUpdates.FirstOrDefault(x => x.Id == id && x.EmployeeId == empId);
+            var empId = CurrentEmployeeId;
+            if (string.IsNullOrWhiteSpace(empId))
+            {
+                return Challenge();
+            }
+
+            var update = await _ctx.DailyUpdates
+                .FirstOrDefaultAsync(x => x.Id == id && x.EmployeeId == empId, cancellationToken);
+
             if (update == null)
             {
                 return NotFound();
             }
 
             _ctx.DailyUpdates.Remove(update);
-            _ctx.SaveChanges();
-            return RedirectToAction("MyUpdates");
+            await _ctx.SaveChangesAsync(cancellationToken);
+            return RedirectToAction(nameof(MyUpdates));
         }
     }
 }

@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DailyUpdatesApp.Models
 {
-    public class DailyUpdate
+    public class DailyUpdate : IValidatableObject
     {
         public int Id { get; set; }
         public string EmployeeId { get; set; }
@@ -39,5 +41,18 @@ namespace DailyUpdatesApp.Models
         public bool HasETAChange { get; set; } // ETA Changed: Yes/No
 
         public string ETAChangeDescription { get; set; } // ETA Change Description
+
+        [NotMapped]
+        public TimeSpan EstimatedTime => new TimeSpan(EstimatedHours, EstimatedMinutes, EstimatedSeconds);
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (HasETAChange && string.IsNullOrWhiteSpace(ETAChangeDescription))
+            {
+                yield return new ValidationResult(
+                    "ETA change description is required when ETA is marked as changed.",
+                    new[] { nameof(ETAChangeDescription) });
+            }
+        }
     }
 }

@@ -1,8 +1,11 @@
-using Microsoft.AspNetCore.Mvc;
-using DailyUpdatesApp.Models;
-using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
-using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using DailyUpdatesApp.Models;
+using DailyUpdatesApp.Models.ViewModels;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace DailyUpdatesApp.Controllers
 {
@@ -15,37 +18,36 @@ namespace DailyUpdatesApp.Controllers
             _ctx = ctx;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
-            // For authenticated users: show today's updates
+            var vm = new HomeIndexViewModel
+            {
+                Updates = Enumerable.Empty<DailyUpdate>(),
+                Employees = Enumerable.Empty<Employee>(),
+            };
+
             if (User?.Identity?.IsAuthenticated ?? false)
             {
-                var today = System.DateTime.Today;
-                var updates = _ctx.DailyUpdates
-                    .Where(x => x.Date == today)
+                var today = DateTime.Today;
+                var next = today.AddDays(1);
+
+                vm.Updates = await _ctx.DailyUpdates
+                    .Where(x => x.Date >= today && x.Date < next)
                     .Include(x => x.Employee)
                     .OrderByDescending(x => x.CreatedAt)
-                    .ToList();
+                    .AsNoTracking()
+                    .ToListAsync(cancellationToken);
 
-                // If manager, also show employees list on Home for quick access
                 if (User.IsInRole("Manager"))
                 {
-                    var employees = _ctx.Users
+                    vm.Employees = await _ctx.Users
                         .OrderBy(e => e.Name)
-                        .ToList();
-
-                    var vm = new Models.ViewModels.HomeIndexViewModel
-                    {
-                        Updates = updates,
-                        Employees = employees
-                    };
-                    return View(vm);
+                        .AsNoTracking()
+                        .ToListAsync(cancellationToken);
                 }
-
-                return View(updates);
             }
 
-            return View(new List<DailyUpdate>());
+            return View(vm);
         }
     }
 }

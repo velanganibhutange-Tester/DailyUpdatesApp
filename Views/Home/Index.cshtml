@@ -1,22 +1,10 @@
-@using DailyUpdatesApp.Models.ViewModels
-@model object
+@model DailyUpdatesApp.Models.ViewModels.HomeIndexViewModel
 
 @{
     ViewData["Title"] = "Welcome";
 
-    
-    DailyUpdatesApp.Models.ViewModels.HomeIndexViewModel vm = null;
-    IEnumerable<DailyUpdatesApp.Models.DailyUpdate> updatesList = new List<DailyUpdatesApp.Models.DailyUpdate>();
-
-    if (Model is DailyUpdatesApp.Models.ViewModels.HomeIndexViewModel m)
-    {
-        vm = m;
-        updatesList = vm.Updates ?? Enumerable.Empty<DailyUpdatesApp.Models.DailyUpdate>();
-    }
-    else if (Model is IEnumerable<DailyUpdatesApp.Models.DailyUpdate> list)
-    {
-        updatesList = list;
-    }
+    var updatesList = Model.Updates ?? Enumerable.Empty<DailyUpdatesApp.Models.DailyUpdate>();
+    var employeesList = Model.Employees ?? Enumerable.Empty<DailyUpdatesApp.Models.Employee>();
 }
 
 <div class="card" style="text-align: center;">
@@ -44,7 +32,7 @@
 
 
 @* Manager: show employees list for quick navigation *@
-@if (vm != null && vm.Employees != null && vm.Employees.Any())
+@if (User.IsInRole("Manager") && employeesList.Any())
 {
     <div class="card" style="margin-top: 30px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
@@ -52,7 +40,7 @@
             <p style="margin:0; color:#777; font-size:14px;">Click a name to view that employee's updates (most recent first)</p>
         </div>
         <ul style="list-style:none; padding-left:0; display:flex; flex-wrap:wrap; gap:10px;">
-            @foreach (var e in vm.Employees)
+            @foreach (var e in employeesList)
             {
                 <li>
                     <a href="/Admin/EmployeeUpdates/@e.Id" class="btn btn-light" style="padding:8px 12px; border-radius:8px; border:1px solid #ddd; display:inline-block;">👤 @e.Name</a>

@@ -1,15 +1,12 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc;
 
 namespace DailyUpdatesApp.Areas.Identity.Pages.Account
 {
-    public class ForgotPasswordConfirmationModel : PageModel
+    public class ResetPasswordConfirmationModel : PageModel
     {
-        [TempData]
-        public string ResetLink { get; set; }
-
         public void OnGet()
         {
         }
     }
 }
+

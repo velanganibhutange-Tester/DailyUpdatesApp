@@ -1,8 +1,10 @@
 using System;
 using System.Linq;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
+using System.Threading;
+using System.Threading.Tasks;
 using DailyUpdatesApp.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace DailyUpdatesApp.Controllers
@@ -17,22 +19,28 @@ namespace DailyUpdatesApp.Controllers
             _ctx = ctx;
         }
 
-        public IActionResult Dashboard(DateTime? date)
+        public async Task<IActionResult> Dashboard(DateTime? date, CancellationToken cancellationToken)
         {
-            var d = date ?? DateTime.Today;
-            var updates = _ctx.DailyUpdates
-                             .Where(x=>x.Date==d)
-                             .Include(x=>x.Employee)
-                             .ToList();
+            var d = (date ?? DateTime.Today).Date;
+            var next = d.AddDays(1);
+
+            var updates = await _ctx.DailyUpdates
+                .Where(x => x.Date >= d && x.Date < next)
+                .Include(x => x.Employee)
+                .OrderByDescending(x => x.CreatedAt)
+                .AsNoTracking()
+                .ToListAsync(cancellationToken);
+
             return View(updates);
         }
 
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Details(int id, CancellationToken cancellationToken)
         {
-            var update = _ctx.DailyUpdates
-                              .Where(x => x.Id == id)
-                              .Include(x => x.Employee)
-                              .FirstOrDefault();
+            var update = await _ctx.DailyUpdates
+                .Where(x => x.Id == id)
+                .Include(x => x.Employee)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(cancellationToken);
             if (update == null)
             {
                 return NotFound();
@@ -41,32 +49,39 @@ namespace DailyUpdatesApp.Controllers
         }
 
         // Shows all updates for a specific employee in descending order (most recent first)
-        public IActionResult EmployeeUpdates(string employeeId)
+        public async Task<IActionResult> EmployeeUpdates(string id, CancellationToken cancellationToken)
         {
-            if (string.IsNullOrEmpty(employeeId)) return BadRequest();
+            if (string.IsNullOrWhiteSpace(id)) return BadRequest();
+            var employeeId = id;
 
-            var updates = _ctx.DailyUpdates
-                              .Where(x => x.EmployeeId == employeeId)
-                              .Include(x => x.Employee)
-                              .OrderByDescending(x => x.CreatedAt)
-                              .ToList();
+            var updates = await _ctx.DailyUpdates
+                .Where(x => x.EmployeeId == employeeId)
+                .OrderByDescending(x => x.CreatedAt)
+                .AsNoTracking()
+                .ToListAsync(cancellationToken);
 
-            ViewData["EmployeeName"] = _ctx.Users.Where(u => u.Id == employeeId).Select(u => u.Name).FirstOrDefault() ?? "Unknown";
+            var employeeName = await _ctx.Users
+                .Where(u => u.Id == employeeId)
+                .Select(u => u.Name)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(cancellationToken);
+
+            ViewData["EmployeeName"] = employeeName ?? "Unknown";
             return View(updates);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
         {
-            var update = _ctx.DailyUpdates.FirstOrDefault(x => x.Id == id);
+            var update = await _ctx.DailyUpdates.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
             if (update == null)
             {
                 return NotFound();
             }
 
             _ctx.DailyUpdates.Remove(update);
-            _ctx.SaveChanges();
+            await _ctx.SaveChangesAsync(cancellationToken);
             return RedirectToAction("Dashboard");
         }
     }

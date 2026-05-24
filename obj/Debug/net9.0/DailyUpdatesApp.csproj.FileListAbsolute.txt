@@ -431,6 +431,7 @@ D:\DailyUpdatesApp\DailyUpdatesApp\obj\Debug\net9.0\compressed\a3ygkwa5zy-{0}-2z
 D:\DailyUpdatesApp\DailyUpdatesApp\obj\Debug\net9.0\compressed\nezrqnk58p-{0}-muycvpuwrr-muycvpuwrr.gz
 D:\DailyUpdatesApp\DailyUpdatesApp\obj\Debug\net9.0\compressed\v0zgfp0y55-{0}-87fc7y1x7t-87fc7y1x7t.gz
 D:\DailyUpdatesApp\DailyUpdatesApp\obj\Debug\net9.0\compressed\yfc7ypekbg-{0}-mlv21k5csn-mlv21k5csn.gz
+D:\DailyUpdatesApp\DailyUpdatesApp\obj\Debug\net9.0\compressed\080ebicbnn-{0}-updtlvu8rv-updtlvu8rv.gz
 D:\DailyUpdatesApp\DailyUpdatesApp\obj\Debug\net9.0\compressed\ww0itrf881-{0}-d171zkdrjx-d171zkdrjx.gz
 D:\DailyUpdatesApp\DailyUpdatesApp\obj\Debug\net9.0\compressed\3joqcd2mvf-{0}-atrtqdljf4-atrtqdljf4.gz
 D:\DailyUpdatesApp\DailyUpdatesApp\obj\Debug\net9.0\compressed\sep73l6x18-{0}-b7iojwaux1-b7iojwaux1.gz
@@ -447,4 +448,3 @@ D:\DailyUpdatesApp\DailyUpdatesApp\obj\Debug\net9.0\refint\DailyUpdatesApp.dll
 D:\DailyUpdatesApp\DailyUpdatesApp\obj\Debug\net9.0\DailyUpdatesApp.pdb
 D:\DailyUpdatesApp\DailyUpdatesApp\obj\Debug\net9.0\DailyUpdatesApp.genruntimeconfig.cache
 D:\DailyUpdatesApp\DailyUpdatesApp\obj\Debug\net9.0\ref\DailyUpdatesApp.dll
-D:\DailyUpdatesApp\DailyUpdatesApp\obj\Debug\net9.0\compressed\080ebicbnn-{0}-updtlvu8rv-updtlvu8rv.gz

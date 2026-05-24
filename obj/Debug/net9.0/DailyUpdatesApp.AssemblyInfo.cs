@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DailyUpdatesApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a57ed075d9825f8682408d0b6f360bfad3d3e748")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+aaa337b0ce2122878687a699348cf6821db7c855")]
 [assembly: System.Reflection.AssemblyProductAttribute("DailyUpdatesApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DailyUpdatesApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

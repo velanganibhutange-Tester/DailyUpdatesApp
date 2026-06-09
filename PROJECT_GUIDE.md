@@ -1,64 +1,147 @@
-# Daily Updates App - Project Guide
+# Daily Updates App - Project Documentation
 
-This guide explains how to run the Daily Updates App locally, log in as a manager or employee, and access the SQL Server database used by the application.
+This document is the technical reference for the Daily Updates App. It explains the project structure, execution flow, database setup, authentication, important files, routes, and validation steps.
 
 ## Project Overview
 
-Daily Updates App is an ASP.NET Core MVC application with ASP.NET Core Identity authentication.
+Daily Updates App is an ASP.NET Core MVC application for tracking employee daily work updates.
 
-Main features:
-- Employees can register, log in, add daily work updates, view their own updates, edit updates, and delete their own updates.
+Main workflows:
+
+- Employees can register, log in, add daily updates, view their own updates, edit their own updates, and delete their own updates.
 - Managers can log in, view team updates for a selected date, view employee-specific updates, view update details, and delete updates.
-- User accounts and daily updates are stored in SQL Server LocalDB.
+- Users, roles, and daily updates are stored in SQL Server LocalDB.
 
 ## Technology Stack
 
-- .NET: `net9.0`
-- Framework: ASP.NET Core MVC + Razor Pages
-- Authentication: ASP.NET Core Identity
-- Database: SQL Server LocalDB
-- ORM: Entity Framework Core SQL Server
+| Layer | Technology |
+| --- | --- |
+| Runtime | .NET 9 |
+| Web framework | ASP.NET Core MVC + Razor Pages |
+| UI rendering | Razor `.cshtml` views |
+| Authentication | ASP.NET Core Identity |
+| Authorization | Role-based authorization |
+| Database | SQL Server LocalDB |
+| ORM | Entity Framework Core SQL Server |
+| Client libraries | jQuery, jQuery Validation, Unobtrusive Validation |
 
-## Prerequisites
+This project does not use React, Angular, Vue, or a separate frontend application. HTML is generated on the server by Razor views and Razor Pages.
 
-Install these before running the app:
+## Important Files And Folders
 
-1. .NET 9 SDK
-2. SQL Server LocalDB
-3. Visual Studio 2022, Visual Studio Code, or another .NET-compatible editor
-4. SQL Server Management Studio, Azure Data Studio, or another SQL client if you want to inspect the database manually
+### Root Files
 
-Validate your .NET installation:
+| File | Purpose |
+| --- | --- |
+| `DailyUpdatesApp.sln` | Visual Studio solution file. Opens the project in Visual Studio. |
+| `DailyUpdatesApp.csproj` | Project configuration. Defines `.NET 9` and NuGet packages. |
+| `Program.cs` | Application startup. Configures services, database, Identity, middleware, roles, seed user, and routes. |
+| `appsettings.json` | App configuration, including the SQL Server LocalDB connection string. |
+| `libman.json` | Frontend library manager configuration for browser libraries under `wwwroot/lib`. |
+| `PROJECT_GUIDE.md` | Technical project documentation. |
+| `BEGINNER_PROJECT_DOCUMENTATION.md` | Beginner guide for understanding and extending the project. |
 
-```powershell
-dotnet --version
-```
+### Controllers
 
-The version should be `9.x`.
+Controllers receive browser requests, perform backend work, and return views or redirects.
 
-## Project Location
+| File | Purpose |
+| --- | --- |
+| `Controllers/HomeController.cs` | Handles the home page and summary data. |
+| `Controllers/UpdateController.cs` | Handles employee daily update actions: add, edit, details, delete, and my updates. |
+| `Controllers/AdminController.cs` | Handles manager-only dashboard and employee update pages. |
 
-Current project folder:
+### Models
 
-```text
-D:\DailyUpdatesApp\DailyUpdatesApp
-```
+Models represent database entities and data passed to views.
 
-Solution file:
+| File | Purpose |
+| --- | --- |
+| `Models/ApplicationDbContext.cs` | EF Core database context. Registers Identity tables and `DailyUpdates`. |
+| `Models/Employee.cs` | Application user model. Extends ASP.NET Core Identity user data. |
+| `Models/DailyUpdate.cs` | Daily update database model. Stores ticket/update details. |
+| `Models/ViewModels/HomeIndexViewModel.cs` | View model used by the home page. |
 
-```text
-DailyUpdatesApp.sln
-```
+### Services
 
-Project file:
+Services contain reusable backend logic that should not live directly in controllers.
 
-```text
-DailyUpdatesApp.csproj
-```
+| File | Purpose |
+| --- | --- |
+| `Services/IEmailSender.cs` | Email sender contract used by Identity/password reset flows. |
+| `Services/EmailSender.cs` | SMTP email sender implementation. Logs/skips email if SMTP is not configured. |
+| `Services/PasswordResetOtpService.cs` | Generates and validates OTP codes for password reset. |
 
-## Database Configuration
+### Views
 
-The active database connection string is in `appsettings.json`:
+Views are Razor `.cshtml` files that generate HTML.
+
+| File/Folder | Purpose |
+| --- | --- |
+| `Views/_ViewStart.cshtml` | Sets the default layout for MVC views. |
+| `Views/_ViewImports.cshtml` | Imports namespaces and Razor tag helpers. |
+| `Views/Home/Index.cshtml` | Home page UI. |
+| `Views/Update` | Employee update pages. |
+| `Views/Admin` | Manager dashboard and detail pages. |
+| `Views/Shared/_Layout.cshtml` | Shared page layout, navigation, common CSS, footer, and `@RenderBody()`. |
+| `Views/Shared/_LoginPartial.cshtml` | Login/logout partial view. |
+| `Views/Shared/_ValidationScriptsPartial.cshtml` | Client-side validation scripts partial. |
+
+### Identity Pages
+
+Identity pages are Razor Pages used for login, registration, logout, forgot password, reset password, and lockout screens.
+
+| Folder | Purpose |
+| --- | --- |
+| `Areas/Identity/Pages` | Identity Razor Page configuration and shared files. |
+| `Areas/Identity/Pages/Account` | Account-related UI pages and page models. |
+
+Each `.cshtml` file contains the UI. Each matching `.cshtml.cs` file contains the backend page logic.
+
+### Static Files
+
+| Folder/File | Purpose |
+| --- | --- |
+| `wwwroot/js/password-toggle.js` | JavaScript for showing/hiding password fields. |
+| `wwwroot/lib/jquery` | jQuery library. |
+| `wwwroot/lib/jquery-validation` | Client-side validation library. |
+| `wwwroot/lib/jquery-validation-unobtrusive` | ASP.NET Core unobtrusive validation integration. |
+
+### Generated Folders
+
+| Folder | Purpose |
+| --- | --- |
+| `bin` | Build output such as `.dll`, `.exe`, and runtime files. Do not edit manually. |
+| `obj` | Intermediate build files generated by .NET. Do not edit manually. |
+| `.git` | Git repository metadata. Do not edit manually. |
+| `.config` | Local .NET/tool configuration. |
+| `.idea` | JetBrains IDE settings. |
+
+## Application Execution Flow
+
+Typical request flow:
+
+1. Browser sends a request, for example `/Update/MyUpdates`.
+2. ASP.NET Core routing maps the URL to a controller action.
+3. The controller checks authentication/authorization when required.
+4. The controller reads or writes data using `ApplicationDbContext`.
+5. Entity Framework Core communicates with SQL Server LocalDB.
+6. The controller returns a Razor view.
+7. Razor generates HTML and sends it to the browser.
+
+Example update creation flow:
+
+1. User opens `/Update/Add`.
+2. `UpdateController` returns `Views/Update/Add.cshtml`.
+3. User submits the form.
+4. The POST action validates the input.
+5. The controller creates a `DailyUpdate` record.
+6. EF Core saves the record into `DailyUpdates`.
+7. User is redirected to `/Update/MyUpdates`.
+
+## Database Details
+
+Connection string location: `appsettings.json`
 
 ```json
 "ConnectionStrings": {
@@ -66,63 +149,32 @@ The active database connection string is in `appsettings.json`:
 }
 ```
 
-Database details:
-
 | Item | Value |
 | --- | --- |
 | SQL Server instance | `(localdb)\MSSQLLocalDB` |
 | Database name | `DailyUpdatesDB` |
 | Authentication | Windows Authentication |
-| SQL username | Not required |
-| SQL password | Not required |
+| SQL username/password | Not required |
 
-Because this uses Windows Authentication, the app connects using the currently signed-in Windows user.
+The app creates the database on startup by using `EnsureCreatedAsync()`. This is simple for local development, but EF Core migrations are better for production or shared environments.
 
-## How To Run The Application
+Main tables:
 
-Open PowerShell in the project folder:
+| Table | Purpose |
+| --- | --- |
+| `AspNetUsers` | Application users/employees. |
+| `AspNetRoles` | Roles such as `Manager` and `Employee`. |
+| `AspNetUserRoles` | User-to-role mappings. |
+| `DailyUpdates` | Employee daily update records. |
 
-```powershell
-cd D:\DailyUpdatesApp\DailyUpdatesApp
-```
+## Startup Behavior
 
-Restore dependencies:
+On startup, the app:
 
-```powershell
-dotnet restore
-```
-
-Build the project:
-
-```powershell
-dotnet build
-```
-
-Run the app:
-
-```powershell
-dotnet run
-```
-
-After the app starts, the terminal will show the local URL. It is usually one of these:
-
-```text
-https://localhost:5001
-http://localhost:5000
-```
-
-Open the shown URL in a browser.
-
-## First Startup Behavior
-
-On startup, the app automatically:
-
-1. Creates the database if it does not already exist.
-2. Creates the required Identity tables.
-3. Creates these roles if missing:
-   - `Manager`
-   - `Employee`
-4. In Development environment only, creates a local test manager account if it does not already exist.
+1. Creates the database if it does not exist.
+2. Creates Identity tables if missing.
+3. Creates the `Manager` and `Employee` roles if missing.
+4. In Development environment only, creates a test manager account.
 
 Development manager account:
 
@@ -132,106 +184,54 @@ Development manager account:
 | Password | `P@ssw0rd!` |
 | Role | `Manager` |
 
-## Access As Manager
+## Running The Application
 
-1. Run the app.
-2. Open the local URL shown in the terminal.
-3. Go to:
+Prerequisites:
 
-```text
-/Identity/Account/Login
+1. .NET 9 SDK
+2. SQL Server LocalDB
+3. Visual Studio, Visual Studio Code, JetBrains Rider, or another .NET editor
+4. SQL Server Management Studio or Azure Data Studio for database inspection
+
+Run from PowerShell:
+
+```powershell
+cd D:\DailyUpdatesApp\DailyUpdatesApp
+dotnet restore
+dotnet build
+dotnet run
 ```
 
-4. Log in with:
+Open the URL shown in the terminal. It is commonly:
 
 ```text
-Email: test@local
-Password: P@ssw0rd!
+https://localhost:5001
+http://localhost:5000
 ```
 
-5. After login, open:
+## Common Routes
 
-```text
-/Admin/Dashboard
-```
+| Route | Access | Purpose |
+| --- | --- | --- |
+| `/` | Anyone | Home page |
+| `/Identity/Account/Login` | Anyone | Login |
+| `/Identity/Account/Register` | Anyone | Register employee account |
+| `/Update/Add` | Logged-in users | Add daily update |
+| `/Update/MyUpdates` | Logged-in users | View own updates |
+| `/Admin/Dashboard` | Manager only | Manager dashboard |
+| `/Admin/EmployeeUpdates/{id}` | Manager only | View one employee's updates |
 
-Manager capabilities:
+## Database Inspection
 
-- View all employee updates for the selected date.
-- View update details.
-- View all updates for a specific employee.
-- Delete updates.
-- See employee list on the home page.
-
-Important: the seeded manager account is created only when the app runs in Development environment.
-
-## Access As Employee
-
-1. Run the app.
-2. Open:
-
-```text
-/Identity/Account/Register
-```
-
-3. Register using an email and password.
-4. The app automatically assigns newly registered users to the `Employee` role.
-5. After registration, the employee is signed in automatically.
-
-Employee capabilities:
-
-- Add daily updates:
-
-```text
-/Update/Add
-```
-
-- View own updates:
-
-```text
-/Update/MyUpdates
-```
-
-- View details for own updates only.
-- Edit own updates only.
-- Delete own updates only.
-
-Employees cannot access manager-only routes such as:
-
-```text
-/Admin/Dashboard
-```
-
-## How To Access The Database From SQL Server Management Studio
-
-1. Open SQL Server Management Studio.
-2. In the connection dialog, use:
+Connect in SQL Server Management Studio:
 
 ```text
 Server name: (localdb)\MSSQLLocalDB
 Authentication: Windows Authentication
+Database: DailyUpdatesDB
 ```
 
-3. Click `Connect`.
-4. Expand `Databases`.
-5. Open:
-
-```text
-DailyUpdatesDB
-```
-
-Main tables:
-
-| Table | Purpose |
-| --- | --- |
-| `AspNetUsers` | Application users/employees |
-| `AspNetRoles` | Roles such as Manager and Employee |
-| `AspNetUserRoles` | User-to-role mappings |
-| `DailyUpdates` | Daily update records |
-
-## Useful SQL Queries
-
-View all users:
+Useful SQL queries:
 
 ```sql
 SELECT Id, Email, UserName, Name, Role, EmailConfirmed
@@ -239,15 +239,11 @@ FROM AspNetUsers
 ORDER BY Email;
 ```
 
-View all roles:
-
 ```sql
 SELECT Id, Name
 FROM AspNetRoles
 ORDER BY Name;
 ```
-
-View users with their assigned roles:
 
 ```sql
 SELECT
@@ -261,8 +257,6 @@ LEFT JOIN AspNetUserRoles ur ON ur.UserId = u.Id
 LEFT JOIN AspNetRoles r ON r.Id = ur.RoleId
 ORDER BY u.Email;
 ```
-
-View daily updates with employee details:
 
 ```sql
 SELECT
@@ -286,25 +280,9 @@ INNER JOIN AspNetUsers u ON u.Id = d.EmployeeId
 ORDER BY d.CreatedAt DESC;
 ```
 
-View today's updates:
+## Promote A User To Manager In Local Development
 
-```sql
-SELECT
-    d.Id,
-    u.Email,
-    d.Feature,
-    d.TicketNumber,
-    d.Status,
-    d.CreatedAt
-FROM DailyUpdates d
-INNER JOIN AspNetUsers u ON u.Id = d.EmployeeId
-WHERE CAST(d.Date AS date) = CAST(GETDATE() AS date)
-ORDER BY d.CreatedAt DESC;
-```
-
-## How To Make A Registered User A Manager
-
-Best practice is to do role changes through application code or an admin screen. If you need to promote a local user directly in SQL during development, use this carefully:
+Prefer an application/admin workflow for role changes. For local development only, this SQL can promote a registered user:
 
 ```sql
 DECLARE @Email nvarchar(256) = 'user@example.com';
@@ -336,15 +314,15 @@ BEGIN
 END;
 ```
 
-After changing roles, log out and log back in so the authentication cookie gets the updated role.
+After changing roles directly in SQL, log out and log back in.
 
-## Password Reset Notes
+## Password Reset And Email
 
 The app includes a forgot-password flow using OTP.
 
-Email configuration is optional in local development. If SMTP settings are not configured, the app does not send email and logs the behavior instead.
+Email configuration is optional for local development. If SMTP settings are not configured, the email sender logs/skips sending instead of failing the full app.
 
-Optional email configuration keys:
+Optional configuration shape:
 
 ```json
 "Email": {
@@ -359,52 +337,39 @@ Optional email configuration keys:
 }
 ```
 
-Do not commit real production SMTP passwords to source control. Use user secrets, environment variables, or a secure configuration provider.
+Do not commit real production SMTP passwords or production connection strings.
 
-## Common Routes
+## Validation Checklist
 
-| Route | Access | Purpose |
-| --- | --- | --- |
-| `/` | Anonymous/authenticated | Home page |
-| `/Identity/Account/Login` | Anonymous | Login |
-| `/Identity/Account/Register` | Anonymous | Register employee account |
-| `/Update/Add` | Authenticated users | Add daily update |
-| `/Update/MyUpdates` | Authenticated users | View own updates |
-| `/Admin/Dashboard` | Manager only | Manager dashboard |
-
-## Validation Steps After Setup
-
-Use this checklist to confirm the app works correctly:
-
-1. Run `dotnet build` successfully.
-2. Run `dotnet run`.
-3. Confirm `DailyUpdatesDB` exists in SQL Server LocalDB.
-4. Log in as manager with `test@local` / `P@ssw0rd!`.
-5. Confirm `/Admin/Dashboard` opens for the manager.
-6. Register a new employee account.
-7. Add an update as the employee.
-8. Confirm the employee can see the update in `/Update/MyUpdates`.
-9. Log back in as manager and confirm the update appears in `/Admin/Dashboard`.
-10. Run the SQL query for daily updates and confirm the record exists in `DailyUpdates`.
+1. Run `dotnet restore`.
+2. Run `dotnet build`.
+3. Run `dotnet run`.
+4. Confirm `DailyUpdatesDB` exists in SQL Server LocalDB.
+5. Log in as manager with `test@local` / `P@ssw0rd!`.
+6. Confirm `/Admin/Dashboard` opens for the manager.
+7. Register a new employee.
+8. Add an update as the employee.
+9. Confirm the employee sees the update in `/Update/MyUpdates`.
+10. Confirm the manager sees the update in `/Admin/Dashboard`.
+11. Confirm the record exists in SQL Server table `DailyUpdates`.
 
 ## Common Pitfalls
 
-- If the app cannot connect to SQL Server, confirm LocalDB is installed and the server name is exactly `(localdb)\MSSQLLocalDB`.
-- If the manager login does not exist, make sure the app is running in Development environment.
-- If a user was promoted to Manager directly in SQL, log out and log in again.
-- If database tables are missing, run the app once so `EnsureCreatedAsync()` can create the database schema.
-- Do not use production credentials in `appsettings.json`.
-- The app currently uses `EnsureCreatedAsync()` instead of EF Core migrations. For production or shared environments, migrations are usually the better long-term approach.
+- LocalDB must be installed and the server name must be exactly `(localdb)\MSSQLLocalDB`.
+- The seeded manager account is created only in Development environment.
+- If a role is changed directly in SQL, the user must log out and log back in.
+- `EnsureCreatedAsync()` does not update an existing database schema after adding new models.
+- Do not mix `EnsureCreatedAsync()` and EF Core migrations for the same serious/shared database.
+- Do not store production secrets in `appsettings.json`.
 
-## Security Notes Before Publishing
+## Production Readiness Notes
 
-Before publishing this app anywhere:
+Before publishing this app:
 
-1. Change or remove the seeded test manager account.
-2. Move secrets out of `appsettings.json`.
+1. Remove or change the seeded test manager account.
+2. Move secrets to user secrets, environment variables, or a secure secret store.
 3. Use a production SQL Server connection string.
-4. Enable HTTPS in the hosting environment.
-5. Add a proper manager/user administration workflow instead of direct SQL role changes.
-6. Consider adding EF Core migrations.
-7. Review authorization rules before exposing the app publicly.
-
+4. Use HTTPS in the hosting environment.
+5. Add an admin screen for user and role management.
+6. Replace `EnsureCreatedAsync()` with EF Core migrations.
+7. Add automated tests for authentication, authorization, and update workflows.

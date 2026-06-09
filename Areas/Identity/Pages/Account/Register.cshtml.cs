@@ -66,7 +66,9 @@ namespace DailyUpdatesApp.Areas.Identity.Pages.Account
                     UserName = Input.Email, 
                     Email = Input.Email,
                     Name = Input.Email.Split('@')[0],
-                    Role = "Employee"
+                    Role = "Employee",
+                    JoinDate = DateTime.Today,
+                    IsActive = true
                 };
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)

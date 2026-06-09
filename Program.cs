@@ -59,6 +59,9 @@ await using (var scope = app.Services.CreateAsyncScope())
                 Email = testEmail,
                 Name = "Local Tester",
                 Role = "Manager",
+                Department = "Local",
+                JoinDate = DateTime.Today,
+                IsActive = true,
                 EmailConfirmed = true
             };
 

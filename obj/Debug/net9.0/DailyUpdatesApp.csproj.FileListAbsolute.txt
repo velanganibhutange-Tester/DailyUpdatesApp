@@ -448,3 +448,13 @@ D:\DailyUpdatesApp\DailyUpdatesApp\obj\Debug\net9.0\refint\DailyUpdatesApp.dll
 D:\DailyUpdatesApp\DailyUpdatesApp\obj\Debug\net9.0\DailyUpdatesApp.pdb
 D:\DailyUpdatesApp\DailyUpdatesApp\obj\Debug\net9.0\DailyUpdatesApp.genruntimeconfig.cache
 D:\DailyUpdatesApp\DailyUpdatesApp\obj\Debug\net9.0\ref\DailyUpdatesApp.dll
+D:\DailyUpdatesApp\DailyUpdatesApp\bin\Debug\net9.0\outputs\publish\web.config
+D:\DailyUpdatesApp\DailyUpdatesApp\bin\Debug\net9.0\outputs\publish\appsettings.json
+D:\DailyUpdatesApp\DailyUpdatesApp\bin\Debug\net9.0\outputs\publish\DailyUpdatesApp.deps.json
+D:\DailyUpdatesApp\DailyUpdatesApp\bin\Debug\net9.0\outputs\publish\DailyUpdatesApp.runtimeconfig.json
+D:\DailyUpdatesApp\DailyUpdatesApp\bin\Debug\net9.0\outputs\publish\DailyUpdatesApp.staticwebassets.endpoints.json
+D:\DailyUpdatesApp\DailyUpdatesApp\bin\Debug\net9.0\outputs\publish\libman.json
+D:\DailyUpdatesApp\DailyUpdatesApp\bin\Debug\net9.0\outputs\react-qa\backup.json
+D:\DailyUpdatesApp\DailyUpdatesApp\obj\Debug\net9.0\compressed\o4op8o19h0-{0}-wpflhzl4jr-wpflhzl4jr.gz
+D:\DailyUpdatesApp\DailyUpdatesApp\obj\Debug\net9.0\compressed\sjiecluyea-{0}-6ebj2qittq-6ebj2qittq.gz
+D:\DailyUpdatesApp\DailyUpdatesApp\obj\Debug\net9.0\compressed\waazh8iy9s-{0}-3rogfi4di8-3rogfi4di8.gz

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#147d68">
+  <title>Daily Updates</title>
+  <link rel="icon" href="brand.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script src="vendor/lucide.min.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#overview"><img src="brand.svg" alt="" width="36" height="36"><span>Daily Updates<span class="brand-subtitle">WORKSPACE</span></span></a>
+      <nav aria-label="Main navigation">
+        <a href="#overview" data-view="overview"><i data-lucide="layout-dashboard"></i><span>Overview</span></a>
+        <a href="#mine" data-view="mine"><i data-lucide="clipboard-list"></i><span>My updates</span></a>
+        <a href="#all" data-view="all"><i data-lucide="layers"></i><span>All updates</span></a>
+        <a href="#team" data-view="team"><i data-lucide="users"></i><span>People</span></a>
+      </nav>
+      <div class="sidebar-bottom">
+        <span class="local-indicator"><span></span>On this browser</span>
+        <button class="profile-button" id="profile-button"><span class="avatar" id="profile-initials">ME</span><span class="profile-copy"><strong id="profile-name">Your profile</strong><span id="profile-department">Personal workspace</span></span><i data-lucide="settings-2"></i></button>
+      </div>
+    </aside>
+    <main>
+      <header class="topbar"><span id="breadcrumb">Workspace / Overview</span><div class="backup-actions"><button id="import-button" class="text-button"><i data-lucide="upload"></i><span>Import</span></button><button id="export-button" class="text-button"><i data-lucide="download"></i><span>Backup</span></button></div></header>
+      <div id="storage-alert" class="storage-alert" role="alert" hidden></div>
+      <div class="page-content">
+        <div class="page-heading"><div><p class="eyebrow" id="page-eyebrow">YOUR WORK, AT A GLANCE</p><h1 id="page-title">Daily Updates</h1><p id="page-subtitle">Thursday, 8 October</p></div><button class="primary-button" id="add-button"><i data-lucide="plus"></i><span>Add update</span></button></div>
+        <section class="metrics" id="metrics" aria-label="Update summary"></section>
+        <section class="updates-section" aria-labelledby="section-title">
+          <div class="section-heading"><div><h2 id="section-title">Today's updates</h2><span class="record-count" id="record-count">0 records</span></div><button class="icon-button" id="csv-button" title="Export visible updates as CSV" aria-label="Export visible updates as CSV"><i data-lucide="file-down"></i></button></div>
+          <div class="filters">
+            <label class="search-field"><i data-lucide="search"></i><span class="sr-only">Search updates</span><input id="search" type="search" placeholder="Search name, feature, or ticket" maxlength="200"></label>
+            <label class="filter-field"><span class="sr-only">Filter by status</span><select id="status-filter"><option value="">All statuses</option><option>In Progress</option><option>Ready for Production</option><option>Blocked</option><option>In UAT</option><option>Done</option></select></label>
+            <label class="filter-field date-filter"><span class="sr-only">Filter by date</span><input id="date-filter" type="date" min="1900-01-01" max="9999-12-31"><button class="icon-button" id="clear-date" title="Show all dates" aria-label="Show all dates"><i data-lucide="x"></i></button></label>
+          </div>
+          <div id="results"></div>
+        </section>
+        <footer class="page-footer"><span>Daily Updates</span><span id="last-saved">No saved updates yet</span></footer>
+      </div>
+    </main>
+  </div>
+
+  <dialog id="editor-dialog" class="editor-dialog" aria-labelledby="editor-title">
+    <form id="update-form">
+      <div class="dialog-heading"><div><p class="eyebrow">DAILY WORK LOG</p><h2 id="editor-title">Add update</h2></div><button type="button" class="icon-button" data-close="editor-dialog" aria-label="Close update form" title="Close"><i data-lucide="x"></i></button></div>
+      <div class="dialog-body">
+        <div class="form-grid"><label>Employee name<input name="employeeName" id="employee-name" required maxlength="80" autocomplete="name"></label><label>Department <span class="optional">(optional)</span><input name="department" id="department" maxlength="80"></label></div>
+        <div class="form-grid"><label>Feature / module<input name="feature" id="feature" required maxlength="160" placeholder="e.g. Authentication"></label><label>Ticket number<input name="ticketNumber" id="ticket-number" required maxlength="100" placeholder="e.g. PROJECT-102"></label></div>
+        <label>Description<textarea name="ticketDescription" id="description" required maxlength="5000" rows="3" placeholder="What did you work on?"></textarea></label>
+        <div class="form-grid"><label>Status<select name="status" id="update-status" required><option>In Progress</option><option>Ready for Production</option><option>Blocked</option><option>In UAT</option><option>Done</option></select></label><label>Update date<input name="date" id="update-date" type="date" required min="1900-01-01" max="9999-12-31"></label></div>
+        <fieldset class="eta-fields"><legend>Estimated time remaining</legend><div class="eta-inputs"><label>Hours<input name="estimatedHours" id="eta-hours" type="number" min="0" max="23" step="1" value="0" required></label><label>Minutes<input name="estimatedMinutes" id="eta-minutes" type="number" min="0" max="59" step="1" value="0" required></label><label>Seconds<input name="estimatedSeconds" id="eta-seconds" type="number" min="0" max="59" step="1" value="0" required></label></div></fieldset>
+        <label class="checkbox-label"><input name="hasETAChange" id="eta-changed" type="checkbox">ETA has changed</label>
+        <label id="eta-reason-field" hidden>Reason for ETA change<textarea name="etaChangeDescription" id="eta-reason" maxlength="2000" rows="2"></textarea></label>
+        <label>Blockers <span class="optional">(optional)</span><textarea name="blockers" id="blockers" maxlength="2000" rows="2" placeholder="Anything preventing progress?"></textarea></label>
+        <p class="form-error" id="editor-error" role="alert" hidden></p>
+      </div>
+      <div class="dialog-actions"><button type="button" class="secondary-button" data-close="editor-dialog">Cancel</button><button type="submit" class="primary-button"><i data-lucide="check"></i><span>Save update</span></button></div>
+    </form>
+  </dialog>
+
+  <dialog id="profile-dialog" class="small-dialog" aria-labelledby="profile-title">
+    <form id="profile-form"><div class="dialog-heading"><h2 id="profile-title">Your profile</h2><button type="button" class="icon-button" data-close="profile-dialog" aria-label="Close profile" title="Close"><i data-lucide="x"></i></button></div><div class="dialog-body"><label>Your name<input id="your-name" required maxlength="80" autocomplete="name"></label><label>Department <span class="optional">(optional)</span><input id="your-department" maxlength="80"></label><p class="form-error" id="profile-error" role="alert" hidden></p></div><div class="dialog-actions"><button type="button" class="secondary-button" data-close="profile-dialog">Cancel</button><button type="submit" class="primary-button">Save profile</button></div></form>
+  </dialog>
+  <dialog id="details-dialog" class="editor-dialog" aria-labelledby="details-title"><div class="dialog-heading"><h2 id="details-title">Update details</h2><button type="button" class="icon-button" data-close="details-dialog" aria-label="Close details" title="Close"><i data-lucide="x"></i></button></div><div id="details-body" class="dialog-body"></div><div class="dialog-actions"><button type="button" class="secondary-button" data-close="details-dialog">Close</button><button class="primary-button" id="details-edit"><i data-lucide="pencil"></i>Edit update</button></div></dialog>
+  <dialog id="confirm-dialog" class="small-dialog" aria-labelledby="confirm-title"><form id="confirm-form"><div class="dialog-heading"><h2 id="confirm-title">Delete update?</h2></div><div class="dialog-body"><p id="confirm-message"></p><p class="form-error" id="confirm-error" role="alert" hidden></p></div><div class="dialog-actions"><button type="button" class="secondary-button" data-close="confirm-dialog">Cancel</button><button type="submit" class="danger-button" id="confirm-action">Delete update</button></div></form></dialog>
+  <input type="file" id="import-file" accept="application/json,.json" hidden>
+  <div id="toast" class="toast" role="status" hidden></div>
+  <noscript><div class="storage-alert">Enable JavaScript to open this workspace.</div></noscript>
+</body>
+</html>

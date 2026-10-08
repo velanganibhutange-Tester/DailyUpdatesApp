@@ -1,0 +1,2 @@
+﻿"employeeName","department","date","feature","ticketNumber","ticketDescription","status","estimatedHours","estimatedMinutes","estimatedSeconds","hasETAChange","etaChangeDescription","blockers"
+"Jordan Tester","Validation","2026-10-08","Browser validation","APP-9001","<img src=x onerror=alert(1)> stays plain text","Done","2","0","0","true","Additional validation",""

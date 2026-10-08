@@ -1,0 +1,19 @@
+.empty-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.person-link { background: none; color: var(--accent-dark); padding: 16px 0 0; font-size: 12px; font-weight: 600; }
+.local-indicator svg { width: 14px; height: 14px; }
+.dialog-body label > input, .dialog-body label > textarea, .dialog-body label > select { margin-top: 0; }
+.table-wrap table { table-layout: auto; }
+.person-cell > span:last-child { min-width: 0; }
+.cell-title { max-width: 100%; }
+.page-heading > div { min-width: 0; }
+.person-cell { max-width: 220px; }
+.topbar > span { min-width: 0; overflow-wrap: anywhere; }
+.brand { letter-spacing: 0; }
+@media (max-width: 760px) {
+  .person-cell { max-width: none; }
+  .person-cell > span:last-child { min-width: 0; }
+  .filters select { padding-inline: 8px; font-size: 12px; }
+  .date-filter input { padding-inline: 6px; font-size: 12px; }
+  .empty-actions button { min-width: 140px; }
+  .dialog-actions { flex-wrap: wrap; }
+}

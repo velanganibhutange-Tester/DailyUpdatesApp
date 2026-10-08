@@ -1,0 +1,89 @@
+.application-shell { min-height: 100vh; display: flex; flex-direction: column; font-size: 16px; }
+.application-nav { background: var(--brand-gradient); color: white; box-shadow: 0 2px 10px #0000001a; }
+.application-nav-inner { display: flex; align-items: center; padding: 0 30px; min-height: 66px; gap: 8px; }
+.application-brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; font-size: 23px; font-weight: 700; padding: 15px 0; margin-right: auto; }
+.application-brand img { width: 32px; height: 32px; }
+.application-nav-links { display: flex; align-items: center; flex-wrap: wrap; }
+.application-nav-links a, .application-profile { min-height: 66px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 15px 18px; color: white; background: none; text-decoration: none; font-weight: 500; border-radius: 0; }
+.application-nav-links a:hover, .application-nav-links a[aria-current="page"], .application-profile:hover { background: #ffffff26; }
+.application-nav-links svg, .application-profile svg { width: 17px; height: 17px; }
+.application-profile { max-width: 240px; }
+.application-profile span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.application-account-links { display: flex; align-items: center; flex-wrap: wrap; gap: 3px; }
+.application-account-links .nav-account-button { display: inline-flex; align-items: center; gap: 5px; color: white; background: #ffffff1a; padding: 10px; font-size: 13px; min-height: 38px; }
+.application-content { width: 100%; max-width: 1240px; padding: 0 20px; margin: 40px auto; flex: 1; }
+.application-page { padding: 30px; background: white; }
+.application-heading { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-bottom: 25px; }
+.application-title { display: flex; align-items: center; gap: 10px; font-size: 25px; margin: 0 0 25px; line-height: 1.4; }
+.application-title svg { width: 25px; height: 25px; }
+.application-heading .application-title { margin: 0; }
+.welcome-section { padding: 30px; text-align: center; background: white; }
+.welcome-section h1 { display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 31px; }
+.welcome-section h1 svg { width: 30px; height: 30px; color: var(--accent); }
+.welcome-section > p { color: #666; margin: 20px 0; font-size: 17px; }
+.welcome-section .application-actions { justify-content: center; margin-top: 30px; }
+.application-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.page-button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; border-radius: 4px; }
+.application-shell .primary-button, .application-shell .secondary-button, .application-shell .danger-button, .page-button { padding: 12px 22px; min-height: 46px; font-size: 15px; font-weight: 600; border-radius: 4px; }
+.page-button svg, .application-actions button svg { width: 18px; height: 18px; }
+.success-button { background: #28a745; color: white; }.success-button:hover { background: #218838; }
+.info-button { background: #2196f3; color: white; }.info-button:hover { background: #1976d2; }
+.light-button { background: #f8f9fa; color: #333; border: 1px solid #ddd; }.light-button:hover { background: #eef0ff; border-color: var(--accent); }
+.team-members { background: white; margin-top: 24px; padding: 24px 30px; }
+.team-members h2 { display: flex; align-items: center; gap: 10px; margin: 0 0 16px; font-size: 22px; }
+.member-links { display: flex; flex-wrap: wrap; gap: 10px; }
+.member-links .page-button { padding: 8px 12px; font-size: 14px; min-height: 40px; max-width: 100%; overflow-wrap: anywhere; }
+.home-updates { margin-top: 24px; }.home-updates .application-heading { margin: 0 0 20px; }
+.home-updates h2 { font-size: 24px; }
+.application-count { background: var(--accent); color: white; font-size: 14px; font-weight: 600; padding: 8px 14px; border-radius: 4px; }
+.application-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 24px; }
+.application-toolbar > label { flex: 1; min-width: 160px; }
+.application-toolbar .search-field { min-width: 220px; flex: 2; }
+.application-toolbar .date-filter { flex: 1; }
+.application-toolbar select { width: 100%; }
+.application-summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 15px; margin-bottom: 25px; }
+.application-stat { padding: 20px; color: white; text-align: center; border-radius: 8px; background: var(--brand-gradient); }
+.application-stat strong { display: block; font-size: 28px; line-height: 1.3; }.application-stat span { display: block; margin-top: 5px; font-size: 14px; }
+.application-stat:nth-child(2) { background: linear-gradient(135deg, #2196f3, #1976d2); }.application-stat:nth-child(3) { background: linear-gradient(135deg, #ff9800, #f57c00); }.application-stat:nth-child(4) { background: linear-gradient(135deg, #4caf50, #388e3c); }
+.update-record { background: white; border: 2px solid #e0e0e0; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+.update-record-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 18px; padding-bottom: 15px; margin-bottom: 15px; border-bottom: 2px solid #f0f0f0; }
+.update-record-heading > div { min-width: 0; }.update-record h3 { font-size: 20px; margin: 0; overflow-wrap: anywhere; }
+.update-record-heading p { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; font-size: 13px; color: #777; margin: 5px 0 0; overflow-wrap: anywhere; }
+.record-status { display: grid; gap: 8px; justify-items: end; flex-shrink: 0; }
+.application-shell .status-badge { padding: 6px 10px; font-size: 12px; border-radius: 4px; }
+.application-shell .status-progress { background: #2196f3; color: white; }.application-shell .status-ready { background: #28a745; color: white; }.application-shell .status-blocked { background: #dc3545; color: white; }.application-shell .status-uat { background: #ff9800; color: #333; }.application-shell .status-done { background: #4caf50; color: white; }
+.eta-changed-label { display: inline-flex; align-items: center; gap: 6px; color: #856404; background: #fff3cd; padding: 5px 9px; border-radius: 4px; font-size: 12px; font-weight: 600; }
+.record-facts { margin: 0 0 16px; background: #fafafa; padding: 15px; font-size: 15px; line-height: 1.7; }
+.record-facts > div { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }.record-facts > div:last-child { margin-bottom: 0; }
+.record-facts dt { font-weight: 600; }.record-facts dd { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; min-width: 0; }
+.record-ticket { background: #f8f9fa; padding: 15px; margin-bottom: 15px; }.record-ticket span { display: block; color: var(--accent-dark); font-weight: 600; margin-bottom: 5px; }.record-ticket strong { font-size: 16px; overflow-wrap: anywhere; }
+.record-ticket-with-status { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 15px; }.record-ticket .status-badge { display: inline-flex; margin-bottom: 0; }.record-status:empty { display: none; }
+.record-description { margin-bottom: 15px; }.record-description > p { background: #fafafa; padding: 10px; margin: 8px 0 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.record-eta { background: #e3f2fd; padding: 15px; margin-bottom: 15px; color: #1769aa; }.record-eta > strong, .record-blockers > strong { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.record-eta-change { margin-top: 10px; padding: 10px; border-left: 4px solid #ff9800; color: #856404; background: #fff3cd; }.record-eta-change p, .record-blockers p { margin: 5px 0 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.record-blockers { border-left: 4px solid #dc3545; background: #ffebee; color: #c62828; padding: 15px; margin-bottom: 15px; }
+.record-created { border-top: 1px solid #e0e0e0; padding-top: 12px; font-size: 12px; color: #777; }.record-actions { margin-top: 15px; }
+.application-empty { background: #e3f2fd; border: 1px solid #90caf9; color: #1769aa; padding: 18px; margin-bottom: 20px; }.application-empty > p { margin: 0 0 15px; }
+.application-bottom-actions { margin-top: 25px; }
+.application-form { display: grid; gap: 25px; }.application-form label { display: grid; gap: 6px; font-size: 15px; color: #555; font-weight: 600; }
+.application-form input, .application-form select { height: 46px; }.application-form textarea, .application-form input, .application-form select { border: 2px solid #ddd; padding: 12px; font-size: 15px; font-weight: 400; }
+.project-fields, .eta-form-section { padding: 20px; display: grid; gap: 18px; border-left: 4px solid; }
+.project-fields { background: #fff3e0; border-color: #ff9800; }.eta-form-section { background: #e3f2fd; border-color: #2196f3; }
+.application-form h2 { display: flex; align-items: center; gap: 10px; font-size: 20px; }.project-fields h2 { color: #a64f00; }.eta-form-section h2 { color: #1769aa; }
+.application-form .checkbox-label { display: flex; align-items: center; gap: 10px; }.application-form .checkbox-label input { width: 18px; height: 18px; padding: 0; }
+.details-page { max-width: 960px; margin: auto; }.details-summary { background: #f8f9fa; border-left: 4px solid var(--accent); padding: 20px; margin-bottom: 20px; }.details-summary h2 { font-size: 22px; }.details-summary p { color: #777; }
+.details-facts { background: white; border: 2px solid #e0e0e0; border-radius: 8px; padding: 25px; line-height: 2; }.home-updates .record-facts { border-left: 4px solid var(--accent); }
+.application-footer { background: #f8f9fa; border-top: 1px solid #ddd; padding: 20px; text-align: center; color: #666; font-size: 13px; }.application-footer p { margin: 0 0 8px; }.application-backups { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; }.application-backups button { font-size: 12px; color: #666; background: none; padding: 4px 8px; }
+.account-page { background: var(--brand-gradient); padding: 35px 20px; display: flex; justify-content: center; }
+.account-panel { width: 100%; max-width: 450px; padding: 35px; border-radius: 8px; background: white; box-shadow: 0 4px 20px #0000001a; }
+.account-heading { text-align: center; margin-bottom: 20px; }.account-heading > svg { width: 40px; height: 40px; color: var(--accent); margin-bottom: 14px; }.account-heading h1 { font-size: 28px; margin-bottom: 10px; }.account-heading p { font-size: 14px; color: #777; }
+.account-notice { padding: 12px; background: #f8f9ff; border-left: 4px solid var(--accent); font-size: 13px; color: #555; line-height: 1.6; margin-bottom: 20px; }
+.account-panel form { display: grid; gap: 18px; }.account-panel label { display: grid; gap: 8px; font-weight: 600; font-size: 14px; }.account-panel input { width: 100%; min-width: 0; height: 46px; border: 2px solid #e0e0e0; }.account-field { display: grid; gap: 8px; }
+.password-field { position: relative; }.password-field input { padding-right: 46px; }.password-field button { position: absolute; right: 4px; top: 4px; width: 38px; height: 38px; display: grid; place-items: center; color: var(--accent); background: transparent; }
+.password-requirements { font-size: 13px; color: #666; }.account-register-button { display: inline-flex; justify-content: center; align-items: center; gap: 8px; padding: 14px; color: white; background: linear-gradient(135deg, #28a745, #20c997); font-size: 16px; font-weight: 600; border-radius: 4px; min-height: 46px; }
+.account-divider { text-align: center; font-size: 14px; color: #777; border-top: 1px solid #e0e0e0; padding-top: 20px; }
+@media (max-width: 1100px) { .application-nav-inner { padding-inline: 20px; flex-wrap: wrap; }.application-brand { font-size: 21px; }.application-nav-links a, .application-profile { padding-inline: 12px; } }
+@media (max-width: 760px) {
+  .application-account-links { max-width: 100%; margin-left: auto; }.application-account-links .nav-account-button { padding: 6px; min-height: 32px; font-size: 11px; }.account-page { padding: 20px 12px; }.account-panel { padding: 22px 16px; }
+  .application-nav-inner { padding: 12px 16px 0; gap: 0; }.application-brand { font-size: 20px; padding: 0; min-height: 36px; }.application-profile { min-height: 36px; padding: 6px; max-width: 130px; }.application-profile span { max-width: 100px; font-size: 12px; }.application-nav-links { order: 3; width: 100%; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 10px; }.application-nav-links a { padding: 9px 2px; min-height: 52px; flex-direction: column; gap: 5px; text-align: center; font-size: 10px; }.application-content { padding: 0 12px; margin: 20px auto; }.application-page, .welcome-section { padding: 20px 14px; }.welcome-section h1 { font-size: 24px; display: block; }.welcome-section h1 svg { display: block; margin: 0 auto 10px; }.welcome-section > p { font-size: 15px; }.application-title { font-size: 22px; align-items: flex-start; }.application-title svg { flex-shrink: 0; margin-top: 3px; }.application-heading { gap: 15px; }.application-shell .primary-button, .application-shell .secondary-button, .application-shell .danger-button, .page-button { padding: 10px 13px; font-size: 13px; min-height: 42px; }.team-members { padding: 20px 14px; margin-top: 16px; }.team-members h2 { font-size: 20px; }.application-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }.application-stat { padding: 15px; }.application-stat span { font-size: 12px; }.update-record { padding: 14px; }.update-record-heading { flex-wrap: wrap; gap: 10px; }.update-record h3 { font-size: 18px; }.record-status { justify-items: start; display: flex; flex-wrap: wrap; }.record-facts { font-size: 14px; padding: 12px; }.application-toolbar .search-field { min-width: 100%; }.application-toolbar > label { min-width: 120px; }.application-form .form-grid { grid-template-columns: 1fr; }.application-form label { font-size: 14px; }.project-fields, .eta-form-section { padding: 14px; }.application-form h2 { font-size: 18px; align-items: flex-start; }.application-form .eta-inputs { gap: 7px; }.application-form .eta-inputs input { padding: 8px; }.application-form .eta-inputs label { font-size: 12px; }.record-created { font-size: 11px; }.application-count { font-size: 12px; }.application-footer { padding: 16px 12px; }
+}
